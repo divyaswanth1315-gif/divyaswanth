@@ -5,8 +5,6 @@ import { Howl } from "howler";
 import { Music, Pause } from "lucide-react";
 import { motion } from "framer-motion";
 
-// Roughly when the intro loader finishes; we try to start music right after.
-const AUTOPLAY_DELAY = 2700;
 // Only real user-activation gestures may unlock audio on mobile. `scroll` /
 // `wheel` do NOT count as activation there, so starting playback on them lit
 // the button while the OS kept the sound blocked — never trigger on scroll.
@@ -21,7 +19,11 @@ export default function MusicPlayer() {
       src: ["/music/wedding-music.mp3"],
       loop: true,
       volume: 0.35,
-      html5: true,
+      // Web Audio API (NOT html5) — it resumes reliably on a touch and plays
+      // through the media channel. html5:true routed sound through an <audio>
+      // element, which on mobile (esp. iPhone's ringer/mute switch) started
+      // "playing" silently. The file is small, so loading it fully is fine.
+      html5: false,
     });
     soundRef.current = sound;
 
@@ -52,19 +54,18 @@ export default function MusicPlayer() {
     sound.on("stop", () => setIsPlaying(false));
     sound.on("playerror", () => setIsPlaying(false));
 
-    // Arm the interaction fallback so the visitor's first tap / scroll / click
-    // starts the music even if the browser blocks sound-on-load. NOT
-    // { once: true }: a blocked first attempt leaves the listeners armed so the
-    // next tap retries, instead of burning the fallback on a silent attempt.
+    // Start the music ONLY on the visitor's first real interaction. Mobile
+    // browsers won't emit sound for a play() made before a user gesture — doing
+    // so earlier started a muted, position-advancing playback that only became
+    // audible a whole loop later. Waiting for the gesture makes the first play()
+    // happen inside the touch, so Web Audio resumes and plays from the start.
+    // NOT { once: true }: if a first attempt is still blocked, the listeners
+    // stay armed so the next tap retries instead of burning the fallback.
     GESTURES.forEach((e) =>
       window.addEventListener(e, onGesture, { passive: true })
     );
 
-    // Best-effort autoplay right after the loader clears.
-    const timer = setTimeout(tryStart, AUTOPLAY_DELAY);
-
     return () => {
-      clearTimeout(timer);
       removeGestureFallback();
       sound.off();
       sound.stop();
