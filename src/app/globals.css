@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+/* =====================================================
+   DESIGN TOKENS
+====================================================== */
+
+:root {
+  /* Core palette */
+  --maroon: #7a0019;
+  --maroon-soft: #9a1b34;
+  --green: #0f5e4f;
+  --green-soft: #2b7a68;
+  --gold: #c8a45b;
+  --gold-light: #e8c96d;
+  --gold-deep: #b8860b;
+
+  /* Neutrals */
+  --ivory: #faf8f2;
+  --cream: #fffdf8;
+  --ink: #2a211c;
+  --taupe: #6b584e;
+}
+
+/* One unified ivory field used by every light section so the whole
+   invitation reads as a single continuous theme. */
+.bg-invite {
+  background: radial-gradient(
+    ellipse 100% 80% at 50% 20%,
+    #fffdf8 0%,
+    #faf7ef 55%,
+    #f4ecda 100%
+  );
+}
+
+/* NOTE: do not add an unlayered `* { margin:0; padding:0 }` reset here.
+   Tailwind's Preflight already resets these inside @layer base, and an
+   unlayered rule would override every layered spacing utility (mt-*,
+   px-*, py-*, space-*) site-wide. */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Lenis smooth scroll is active -> let it own the scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  background: var(--ivory);
+  color: var(--ink);
+  overflow-x: hidden;
+  font-family: var(--font-body), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.font-display {
+  font-family: var(--font-heading), Georgia, serif;
+}
+
+.font-ui {
+  font-family: var(--font-button), serif;
+}
+
+/* =====================================================
+   TYPE HELPERS
+====================================================== */
+
+.eyebrow {
+  font-family: var(--font-button), serif;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .eyebrow {
+    font-size: 0.92rem;
+  }
+}
+
+.gold-text {
+  background: linear-gradient(
+    90deg,
+    var(--gold-deep),
+    var(--gold-light),
+    #fff6d5,
+    var(--gold-light),
+    var(--gold-deep)
+  );
+  background-size: 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: goldShimmer 8s linear infinite;
+}
+
+@keyframes goldShimmer {
+  from {
+    background-position: 0%;
+  }
+  to {
+    background-position: 300%;
+  }
+}
+
+/* =====================================================
+   DECORATIVE ELEMENTS
+====================================================== */
+
+/* Thin gold rule with a diamond in the middle */
+.rule-gold {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold) 20%,
+    var(--gold) 80%,
+    transparent
+  );
+}
+
+.rule-gold::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(200, 164, 91, 0.18);
+}
+
+/* Subtle paper grain overlay */
+.grain {
+  background-image: radial-gradient(
+    rgba(0, 0, 0, 0.025) 1px,
+    transparent 1px
+  );
+  background-size: 4px 4px;
+}
+
+/* Glass card */
+.glass {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(200, 164, 91, 0.35);
+  box-shadow: 0 20px 60px -20px rgba(122, 0, 25, 0.18);
+}
+
+/* =====================================================
+   PHOTO BLENDING — makes white-background portraits
+   dissolve into the section ("one view")
+====================================================== */
+
+/* Feathers the edges of the photo so its white background
+   melts away instead of showing a hard rectangle. */
+.photo-feather {
+  -webkit-mask-image: radial-gradient(
+    ellipse 68% 74% at 50% 46%,
+    #000 52%,
+    rgba(0, 0, 0, 0.55) 68%,
+    transparent 82%
+  );
+  mask-image: radial-gradient(
+    ellipse 68% 74% at 50% 46%,
+    #000 52%,
+    rgba(0, 0, 0, 0.55) 68%,
+    transparent 82%
+  );
+}
+
+/* Soft light halo placed behind the photo. Its centre matches
+   the photo's white background and fades into the section tint,
+   so photo + section become a single continuous field. */
+.photo-halo {
+  background: radial-gradient(
+    ellipse 60% 65% at 50% 45%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.75) 38%,
+    rgba(255, 255, 255, 0) 72%
+  );
+}
+
+/* =====================================================
+   ANIMATIONS
+====================================================== */
+
+.float {
+  animation: floating 7s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-150%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
