@@ -8,7 +8,14 @@ declare module "howler" {
     autoplay?: boolean;
   }
 
-  type HowlEvent = "play" | "playerror" | "load" | "loaderror" | "end" | "pause";
+  type HowlEvent =
+    | "play"
+    | "playerror"
+    | "load"
+    | "loaderror"
+    | "end"
+    | "pause"
+    | "stop";
 
   export class Howl {
     constructor(options: HowlOptions);

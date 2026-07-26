@@ -29,55 +29,48 @@ export default function MusicPlayer() {
     });
     soundRef.current = sound;
 
-    let done = false; // music has successfully started once
-    let attempting = false; // a play() call is in flight (guards against overlap)
-
-    const markPlaying = () => {
-      done = true;
-      attempting = false;
-      setIsPlaying(true);
-      removeGestureFallback();
-    };
-
-    // Single entry point for starting playback. The synchronous `attempting`
-    // flag prevents a second play() (from another gesture or the autoplay
-    // timer) firing before the async "play" event lands — which would spawn a
-    // second, overlapping voice.
-    const startPlayback = () => {
+    // Start playback only if a voice isn't already going. Howler flips its
+    // internal playing() state synchronously inside play(), so this single
+    // guard blocks duplicate/overlapping voices — no separate flag that could
+    // get stuck and force several taps to recover.
+    const tryStart = () => {
       const s = soundRef.current;
-      if (!s || done || attempting || s.playing()) return;
-      attempting = true;
+      if (!s || s.playing()) return;
       s.play();
     };
 
-    // If the browser blocks autoplay, start on the visitor's first interaction.
-    const onGesture = () => startPlayback();
-    const addGestureFallback = () =>
-      GESTURES.forEach((e) =>
-        window.addEventListener(e, onGesture, { once: true, passive: true })
-      );
+    const onGesture = () => tryStart();
     const removeGestureFallback = () =>
       GESTURES.forEach((e) => window.removeEventListener(e, onGesture));
 
-    sound.on("play", markPlaying);
-    sound.on("playerror", () => {
-      attempting = false;
-      setIsPlaying(false);
+    // The button reflects Howler's REAL state via its events — never set
+    // manually from several places, which is what desynced the icon from the
+    // audio on mobile (button "on" but silent).
+    sound.on("play", () => {
+      setIsPlaying(true);
+      // Truly playing now — retire the first-interaction fallback so it can
+      // never fight a later pause.
+      removeGestureFallback();
     });
+    sound.on("pause", () => setIsPlaying(false));
+    sound.on("stop", () => setIsPlaying(false));
+    sound.on("playerror", () => setIsPlaying(false));
 
-    // Arm the interaction fallback right away, so the visitor's very first
-    // tap / scroll / click anywhere starts the music even if the browser
-    // blocks sound-on-load.
-    addGestureFallback();
+    // Arm the interaction fallback so the visitor's first tap / scroll / click
+    // starts the music even if the browser blocks sound-on-load. NOT
+    // { once: true }: a blocked first attempt leaves the listeners armed so the
+    // next tap retries, instead of burning the fallback on a silent attempt.
+    GESTURES.forEach((e) =>
+      window.addEventListener(e, onGesture, { passive: true })
+    );
 
     // Best-effort autoplay right after the loader clears.
-    const timer = setTimeout(() => {
-      startPlayback();
-    }, AUTOPLAY_DELAY);
+    const timer = setTimeout(tryStart, AUTOPLAY_DELAY);
 
     return () => {
       clearTimeout(timer);
       removeGestureFallback();
+      sound.off();
       sound.stop();
       sound.unload();
     };
@@ -86,13 +79,10 @@ export default function MusicPlayer() {
   const toggle = () => {
     const sound = soundRef.current;
     if (!sound) return;
-    if (sound.playing()) {
-      sound.pause();
-      setIsPlaying(false);
-    } else {
-      sound.play();
-      setIsPlaying(true);
-    }
+    // Only drive the audio here; the "play"/"pause" events update the icon, so
+    // it always matches what the audio is actually doing.
+    if (sound.playing()) sound.pause();
+    else sound.play();
   };
 
   return (
