@@ -30,18 +30,28 @@ export default function MusicPlayer() {
     soundRef.current = sound;
 
     let done = false; // music has successfully started once
+    let attempting = false; // a play() call is in flight (guards against overlap)
 
     const markPlaying = () => {
       done = true;
+      attempting = false;
       setIsPlaying(true);
       removeGestureFallback();
     };
 
-    // If the browser blocks autoplay, start on the visitor's first interaction.
-    const onGesture = () => {
-      if (done || !soundRef.current) return;
-      soundRef.current.play();
+    // Single entry point for starting playback. The synchronous `attempting`
+    // flag prevents a second play() (from another gesture or the autoplay
+    // timer) firing before the async "play" event lands — which would spawn a
+    // second, overlapping voice.
+    const startPlayback = () => {
+      const s = soundRef.current;
+      if (!s || done || attempting || s.playing()) return;
+      attempting = true;
+      s.play();
     };
+
+    // If the browser blocks autoplay, start on the visitor's first interaction.
+    const onGesture = () => startPlayback();
     const addGestureFallback = () =>
       GESTURES.forEach((e) =>
         window.addEventListener(e, onGesture, { once: true, passive: true })
@@ -50,7 +60,10 @@ export default function MusicPlayer() {
       GESTURES.forEach((e) => window.removeEventListener(e, onGesture));
 
     sound.on("play", markPlaying);
-    sound.on("playerror", () => setIsPlaying(false));
+    sound.on("playerror", () => {
+      attempting = false;
+      setIsPlaying(false);
+    });
 
     // Arm the interaction fallback right away, so the visitor's very first
     // tap / scroll / click anywhere starts the music even if the browser
@@ -59,7 +72,7 @@ export default function MusicPlayer() {
 
     // Best-effort autoplay right after the loader clears.
     const timer = setTimeout(() => {
-      if (!done) sound.play();
+      startPlayback();
     }, AUTOPLAY_DELAY);
 
     return () => {
