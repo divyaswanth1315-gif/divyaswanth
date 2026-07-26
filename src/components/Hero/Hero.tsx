@@ -34,8 +34,12 @@ export default function Hero() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.15, ease }}
         >
-          <Monogram size={92} className="md:hidden" />
-          <Monogram size={116} className="hidden md:inline-flex" />
+          <span className="inline-flex md:hidden">
+            <Monogram size={92} />
+          </span>
+          <span className="hidden md:inline-flex">
+            <Monogram size={116} />
+          </span>
         </motion.div>
 
         <motion.p

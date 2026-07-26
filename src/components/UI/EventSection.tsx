@@ -145,7 +145,12 @@ export default function EventSection({
                 key={d.label}
                 className="flex gap-4 border-b border-[#c8a45b]/20 pb-4 last:border-0 last:pb-0"
               >
-                <dt className="eyebrow w-24 shrink-0 pt-0.5 text-[#9a1b34]">{d.label}</dt>
+                <dt
+                  className="eyebrow w-32 shrink-0 break-words pt-0.5 leading-snug text-[#9a1b34]"
+                  style={{ letterSpacing: "0.12em" }}
+                >
+                  {d.label}
+                </dt>
                 <dd className="font-display text-lg text-[#4a3830]">
                   {d.value}
                   {d.sub && (
