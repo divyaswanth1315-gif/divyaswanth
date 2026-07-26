@@ -28,7 +28,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-[22px] border border-[#c8a45b]/15 md:inset-[42px]" />
 
       {/* content */}
-      <div className="relative z-10 flex w-full max-w-2xl flex-col items-center py-24 text-center">
+      <div className="relative z-10 flex w-full max-w-2xl flex-col items-center py-14 text-center md:py-24">
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 18 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -46,7 +46,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.4 }}
-          className="eyebrow mt-9 text-[#9a1b34]"
+          className="eyebrow mt-6 text-[#9a1b34] md:mt-9"
         >
           Together with our families
         </motion.p>
@@ -68,14 +68,14 @@ export default function Hero() {
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ duration: 0.9, delay: 0.9, ease }}
-          className="rule-gold mt-9 w-52 md:w-64"
+          className="rule-gold mt-6 w-52 md:mt-9 md:w-64"
         />
 
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 1.05 }}
-          className="mt-9 max-w-xl font-display text-xl italic leading-relaxed text-[#4a3830] md:text-2xl"
+          className="mt-6 max-w-xl font-display text-xl italic leading-relaxed text-[#4a3830] md:mt-9 md:text-2xl"
         >
           request the honour of your presence as we begin our
           forever, together.
@@ -86,7 +86,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 1.2 }}
-          className="mt-10 flex flex-col items-center"
+          className="mt-7 flex flex-col items-center md:mt-10"
         >
           <p className="flex items-baseline gap-3 font-display text-[#7a0019]">
             <span className="text-5xl font-semibold md:text-6xl">22</span>
@@ -109,7 +109,7 @@ export default function Hero() {
           transition={{ duration: 0.9, delay: 1.45 }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="font-ui group relative mt-14 overflow-hidden rounded-full border border-[#7a0019] px-12 py-5 text-sm uppercase tracking-[0.22em] text-[#7a0019] transition-colors duration-500 hover:text-[#faf8f2]"
+          className="font-ui group relative mt-9 overflow-hidden rounded-full border border-[#7a0019] px-12 py-5 text-sm uppercase tracking-[0.22em] text-[#7a0019] transition-colors duration-500 hover:text-[#faf8f2] md:mt-14"
         >
           <span className="relative z-10">Open the Invitation</span>
           <span className="absolute inset-0 origin-bottom scale-y-0 bg-[#7a0019] transition-transform duration-500 group-hover:scale-y-100" />
