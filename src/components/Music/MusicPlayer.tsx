@@ -7,14 +7,10 @@ import { motion } from "framer-motion";
 
 // Roughly when the intro loader finishes; we try to start music right after.
 const AUTOPLAY_DELAY = 2700;
-const GESTURES = [
-  "pointerdown",
-  "click",
-  "touchstart",
-  "keydown",
-  "scroll",
-  "wheel",
-] as const;
+// Only real user-activation gestures may unlock audio on mobile. `scroll` /
+// `wheel` do NOT count as activation there, so starting playback on them lit
+// the button while the OS kept the sound blocked — never trigger on scroll.
+const GESTURES = ["pointerdown", "touchstart", "click", "keydown"] as const;
 
 export default function MusicPlayer() {
   const soundRef = useRef<Howl | null>(null);
