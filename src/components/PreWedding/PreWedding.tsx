@@ -25,7 +25,7 @@ export default function PreWedding() {
           sub: "Kethorai Village, Sogathorai Post,\nThe Nilgiris – 643102",
         },
       ]}
-      mapUrl="https://www.google.com/maps/search/?api=1&query=Sri+Meenakshi+Amman+Temple+Kethorai+Village+Sogathorai+Post+The+Nilgiris"
+      mapUrl="https://maps.app.goo.gl/nqXBZ4eZM6erqcZn9"
       nextId="#wedding"
       nextLabel="The wedding follows"
     />
